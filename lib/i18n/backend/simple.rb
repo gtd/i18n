@@ -32,7 +32,7 @@ module I18n
 
         entry = lookup(locale, key, scope)
         if entry.nil?
-          entry = default(locale, default, options)
+          entry = default(locale, default, options.merge(:key => key, :scope => scope))
           if entry.nil?
             raise(I18n::MissingTranslationData.new(locale, key, options))
           end
@@ -117,6 +117,7 @@ module I18n
         # <tt>translate(locale, :foo)</tt> does not yield a result.
         def default(locale, default, options = {})
           case default
+            when nil    then lookup(I18n.default_locale, options[:key], options[:scope])
             when String then default
             when Symbol then translate locale, default, options
             when Array  then default.each do |obj|
